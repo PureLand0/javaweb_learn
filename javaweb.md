@@ -2,17 +2,376 @@
 
 是用java技术来解决相关web互联网领域的技术栈，就是用java做网站
 
-组成：浏览器、javaweb程序、数据库
+注意：前端服务器的返回是没有数据的，只有url地址，需要浏览器自己去向后端服务器请求这些url。
+
+下面这种图属于“前后端分离开发”，其实还有一种开发叫“前后端组合开发”。目前大多数都是
+
+![image-20241109122354840](javaweb.assets/image-20241109122354840.png)
 
 
 
 # 2、数据库
 
-略
+## 2.1、基本
 
-（补充）事务：一组数据库操作命令，其要么同时被执行，要么同时不被执行，是一个不可分割的逻辑单元
+```dos
+命令行启动数据库
+net start mysql
+命令行关闭数据库
+net stop mysql
+```
+
+```
+连接（登录）数据库，本地数据库不需要写后面2个参数，默认127.0.0.1和3309
+mysql -u用户名 -p密码 [-h数据库服务器IP -P端口号]
+登出数据库
+exit
+```
+
+```
+SQL语句以;结尾
+-- 单行注释（注意有个空格）
+# 单行注释（注意有个空格）
+/*多行注释*/
+```
+
+![image-20241108112259443](javaweb.assets/image-20241108112259443.png)
+
+3个阶段：
+
+- 数据库设计：先设计好数据库（外键、范式等），然后使用DDL进行创建
+- 数据库操作：java程序员使用DML和DQL进行增删改查
+- 数据库优化：使用索引等对数据库进行优化
+
+## 2.2、数据库设计
+
+### 2.2.1、设计
+
+表之间的关系有三种：
+
+- 一对多：班级（一）和学生（多），一个班级可以有多个学生，一个学生只能属于一个班级。在实现上，可以使用外键进行实现。
+- 一对一：用户和身份证，亦比如一个人的信息分为基础信息和扩展信息，我们可以建2张表，这两张表之间就是一对一的关系。在实现上，可以在一个表中添加一个外键，关联另一个表的主键，且把这个外键设置为unique。（为啥要拆开建呢？因为可能对基础信息的查询远多于扩展信息的查询，拆开可以提升效率）
+- 多对多：学生和课程，一个学生可以上多个课程，一个课程也可以有多个学生。在实现上，一般会借用中间表和2个外键帮助实现，如下图：
+
+![image-20241108165254929](javaweb.assets/image-20241108165254929.png)
 
 
+
+接下来介绍一下**外键**：比如现在的职员有一个部门ID，然后另外有个部门表，里面部门ID是**主键**，这种情况下我们称职员表里的部门ID为“外键”。分类：如果我们手动使用foreign key命令来关联这两个字段，这个外键我们称为“**物理外键**”；如果不使用foreign key命令，而是我认为他们之间确实有关系，这个外键我们称为“**逻辑外键**”。
+
+不少企业都严禁使用“物理外键”，实际开发中，外键一般都使用“逻辑外键”。
+
+注意：这里和我们的范式不冲突，范式的核心在于尽量减少一个表中的依赖，就是把大表拆开，拆开之后的小表之间有关系，我们需要使用外键将他们关联起来，在这里我们选取逻辑外键就好啦~
+
+![image-20241108163651812](javaweb.assets/image-20241108163651812.png)
+
+### 2.2.2、DDL
+
+```sql
+-- 创建数据库，如果没有后面的exists，创建同名数据库会报错
+create database [if not exists] 数据库名;
+-- 删除数据库
+drop database [if exists] 数据库名;
+-- 查看当前有哪些数据库
+show databases;
+-- 查看当前工作数据库
+select database();
+-- 切换工作数据库
+use 数据库名;
+```
+
+```sql
+create table 表名 (
+    字段名 数据类型 [约束] [约束] [comment 'xxx'],
+    字段名 数据类型 [约束] [约束] [comment 'xxx'],
+    字段名 数据类型 [约束] [约束] [comment 'xxx']
+) [comment 'xxx'];
+```
+
+![image-20241108131052229](javaweb.assets/image-20241108131052229.png)
+
+举个例子：（auto_increment是一个关键字，用来实现id自增）
+
+```sql
+create table user (
+    id int primary key auto_increment comment 'ID',
+    username varchar(20) unique not null comment '用户名',
+    name varchar(10) not null comment '姓名',
+    age int comment '年龄',
+    gender char(1) default '男' comment '性别'
+) comment '用户表';
+```
+
+数据类型（整数、小数、字符串、日期时间）
+
+|   类型    | 字节 |             说明              |
+| :-------: | :--: | :---------------------------: |
+|  tinyint  |  1   | 无符号形式为tinyint unsigned  |
+| smallint  |  2   | 无符号形式为tinyint smallint  |
+| mediumint |  3   | 无符号形式为tinyint mediumint |
+|    int    |  4   |    无符号形式为tinyint int    |
+|  bigint   |  8   |  无符号形式为tinyint bigint   |
+
+|  类型   | 字节 |                         说明                         |
+| :-----: | :--: | :--------------------------------------------------: |
+|  float  |  4   |           float(5,2)，表示总共5位，小数2位           |
+| double  |  8   |          double(5,2)，表示总共5位，小数2位           |
+| decimal |      | decimal(5,2)，表示总共5位，小数2位（和钱有关用这个） |
+
+|  类型   |                             说明                             |
+| :-----: | :----------------------------------------------------------: |
+| varchar | 变长。varchar(10)表示最多存10个字符，不足10个按照实际存储。性能一般，但是省空间。最大字节数65535B |
+|  char   | 定长。char(10)表示最多存10个字符，不足10个也按10个字符存。性能好，但是不省空间。最大字节数255B |
+
+|   类型   |                  范围                   |        说明         |
+| :------: | :-------------------------------------: | :-----------------: |
+|   date   |          1000-01-01~9999-12-31          |     yyyy-mm-dd      |
+|   time   |          -838:59:59~838:59:59           |      hh:mm:ss       |
+| datetime | 1000-01-01 00:00:00~9999-12-31 23:59:59 | yyyy-mm-dd hh:mm:ss |
+
+```sql
+-- 删除表
+drop table [if exists] 表名;
+-- 展示当前数据库的所有表
+show tables;
+-- 查看表结构
+desc 表名;
+-- 查看建表语句
+show create table 表名;
+-- 还可以对表的字段进行增删改查，但这一部分不用掌握，图像化界面可以搞定
+```
+
+## 2.3、数据库操作
+
+### 2.3.1、DML增删改
+
+```sql
+-- 添加时，字符串和日期时间类型要包在''或者""中，可以使用now()函数获得当前的日期时间
+-- 单条，指定字段
+insert into 表名(字段1,字段2) values(值1,值2);
+-- 单条，所有字段
+insert into 表名 values(值1,值2);
+-- 多条，指定字段
+insert into 表名(字段1,字段2) values(值1,值2),(值1,值2);
+-- 多条，所有字段
+insert into 表名 values(值1,值2),(值1,值2);
+```
+
+```sql
+delete from 表名 [where 条件];
+```
+
+```sql
+update 表名 set 字段1=值1,字段2=值2 [where 条件];
+```
+
+### 2.3.2、DQL单表查询
+
+```sql
+select [distinct] 字段1 [as 别名1],字段2 [as 别名2]
+from 表名
+where 条件
+group by 对where得到的结果进行分组，这是分组的字段
+having 分组后还需要进行筛选，这是筛选条件
+order by 排序的字段
+limit 分页参数
+```
+
+对where行的详细解释：
+
+![image-20241108151434782](javaweb.assets/image-20241108151434782.png)
+
+```sql
+select * from book where id <= 5;
+select * from book where author is null;
+-- 下面两句话等效，ba语句是两端闭的
+select * from book where date >= '2000-01-01' and date <= '2024-01-01';
+select * from book where date between '2000-01-01' and  '2024-01-01';
+-- 下面两句话等效
+select * from book where author_id in (1,2,3);
+select * from book where author_id = 1 or author_id = 2 or author_id = 3;
+-- 查询作者叫"王--"
+select * from book where author_name like '王__';
+-- 查询作者姓王
+select * from book where author_name like '王%';
+```
+
+下面对聚合函数进行解释：把一列数据当成整体，对这一列数据进行操作
+
+```sql
+count() -- null值不会统计，这里推荐使用count(*)，底层有优化
+max()
+min()
+avg()
+sum()
+-- 下面的语句查询了最小的生日，也就是年级最大的人
+select min(birthday) from user
+```
+
+对group by 和 having的详细解释：
+
+```sql
+-- 男女分组，分别得到人数
+-- select后面只能写分组字段和聚合函数
+select gender,count(*) from user group by gender;
+-- 查询生日在'2005-01-01'之前的员工，按照职位进行分类，获取员工数>2的职位
+-- 执行顺序：where->group和聚合函数->having，where后面不可跟聚合函数，having后面可以跟聚合函数
+select job,count(*) from user where birthday < '2005-01-01' group by job having count(*) > 2;
+```
+
+对order by行的详细解释：asc是升序，desc是降序，啥都不写默认是升序
+
+```sql
+-- 啥都不写，默认按birthday升序
+select * from user order by birthday;
+-- birthday降序
+select * from user order by birthday asc;
+-- 先按照birthday降序，如果birthday一样，那么按照id升序
+select * from user order by birthday desc, id asc;
+```
+
+对limit的详细解释：（这个属于方言，不同数据库使用的语言不一样）
+
+```sql
+-- 从第0条开始（含），展示5条
+select * from user limit 0,5
+-- 从第3条开始（含），展示9条
+select * from user limit 3,9
+
+-- 下面假设每页展示的数目固定，是5条
+-- 第1页
+select * from user limit 0,5
+-- 第2页
+select * from user limit 5,5
+-- 第3页
+select * from user limit 10,5
+-- 第n页
+select * from user limit (n-1)*5,5
+```
+
+### 2.3.3、DQL多表查询
+
+```sql
+-- 下面的这行代码，将返回这两个表的笛卡尔积。比如a表有5条数据，b有4条数据，那么将返回5×4=20条数据，这就叫笛卡尔积。
+select * from table_a,table_b;
+-- 我们可以通过where条件筛选出想要的信息
+select * from table_a,table_b where table_a.col1 = table_b.col2;
+```
+
+多表查询分类：
+
+![image-20241109000504980](javaweb.assets/image-20241109000504980.png)
+
+```sql
+-- 显式内连接
+select * from book inner join category on book.category_id = category.category_id;
+-- 隐式内连接
+select * from book,category where book.category_id = category.category_id;
+-- 内连接注意事项：只有book.category_id 和 category.category_id 确实一样才能留下来，有一方是null或者没有匹配上都不可以留下来。
+```
+
+```sql
+-- 左外连接
+-- 首先会把内连接的部分保留下来，然后book中的剩余部分也全部保留
+select * from book letf [outer] join category on book.category_id = category.category_id;
+
+-- 右外连接
+-- 首先会把内连接的部分保留下来，然后category中的剩余部分也全部保留
+select * from book right [outer] join category on book.category_id = category.category_id;
+
+-- 内外连接其实可以相互转化，所以我们一般使用左连接就可以了
+-- 连接之后如果还有筛选条件，需要在后面再加where语句，比如内连接之后，还需要得到价格大于20的书，那么语句变为select a.*,b.category_name from book a inner join category b on a.category_id = b.category_id where a.price > 20;  或者  select * from book, category where book.category_id = category.category_id and book.price > 20;
+-- 如果还需要分组，在where后面再加group by即可
+-- 多对多关系有两个外键，所以会涉及到三张表的连接，select * from A,B,C where A.col1 = B.col1 and B.col2 = C.col2;
+```
+
+举个例子：
+
+book表如下：
+![image-20241109103948782](javaweb.assets/image-20241109103948782.png)
+
+category表如下：
+![image-20241109104006272](javaweb.assets/image-20241109104006272.png)
+
+内连接：
+
+![image-20241109104050669](javaweb.assets/image-20241109104050669.png)
+
+左外连接：
+
+![image-20241109104138563](javaweb.assets/image-20241109104138563.png)
+
+右外连接：
+
+![image-20241109104206282](javaweb.assets/image-20241109104206282.png)
+
+```sql
+-- 标量子查询，子查询返回一个值，在这里子查询返回科技类的id，然后在book中查询科技类的书
+select * from book where book.category_id = (select category_id from category where category_name = '科技');
+-- 列子查询，子查询返回一列，在这里子查询返回科技类和文学类的ids，然后在book中查询科技类和文学类的书
+select * from book where book.category_id in (select category_id from category where category_name = '科技' or category_name = '文学');
+-- 行子查询，子查询返回一行，下面查询和西游记这本书的category_id和price都一样的书的信息
+select * from book where (book.category_id, book.price) = (select category_id,price form book where book.name = '西游记');
+-- 表子查询，子查询返回一个表，常作为临时表来使用,这里先查出来book中价格大于20的书，然后将它作为a表，和category表进行内连接，得到这些书的类别信息
+select a.*,b.category_name from (select * from book where price > 20) a inner join category b on a.category_id = b.category_id;
+```
+
+## 2.4、数据库优化
+
+### 2.4.1、事务
+
+定义：一组操作的集合，这些操作要么同时成功，要么同时失败，不能执行一半然后后面的失败。
+
+```sql
+-- 语法
+start transaction;
+sql1;
+sql2;
+commit;
+rollback;
+-- 使用：先开启事务；然后执行两条sql；如果成功执行commit；如果失败执行rollback
+```
+
+事务的四大特性：ACID
+
+- 原子性：不可再分，要么all成功，要么all失败
+- 一致性：事务完成时，不管成功还是失败，数据都是一致的
+- 隔离性：事务之间是独立的。可以这么理解，开启事务的时候，会把数据复制一份，假设称为copy1，事务的所有操作在copy1上执行，如果成功（运行commit），copy1再返给源数据，如果失败则copy1丢弃。所以，在事务运行过程中，在源数据上看不到任何变化。
+- 持久性：事务成功或者回滚，对数据的改变是持久的
+
+### 2.4.2、索引
+
+**我们首先需要明确一点：索引对于表查询效率的提升是巨大的**
+
+优点：
+
+- 提升查询效率
+- 通过索引对数据进行排序，可以降低排序成本
+
+缺点：
+
+- 索引会消耗空间
+- 索引会降低增删改操作的效率（因为要维护树结构）
+
+原理（示意图）：
+
+![image-20241109120051081](javaweb.assets/image-20241109120051081.png)
+
+原理（实际）：红黑树这些二叉的，树的高度太高，不利于查询，B+树矮胖矮胖的
+
+![image-20241109120919733](javaweb.assets/image-20241109120919733.png)
+
+```sql
+-- 创建索引
+create index 索引名 on 表名(字段名);
+-- 删除索引
+drop index 索引名 on 表名;
+```
+
+注意：
+
+- 系统默认给主键创建索引，主键索引，效率是最高的
+- 对于有unique约束的字段，其本质就是唯一索引
 
 # 3、JDBC
 
