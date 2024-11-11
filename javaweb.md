@@ -1,4 +1,4 @@
-# 1、javaweb简介
+#  1、javaweb简介
 
 是用java技术来解决相关web互联网领域的技术栈，就是用java做网站
 
@@ -373,7 +373,659 @@ drop index 索引名 on 表名;
 - 系统默认给主键创建索引，主键索引，效率是最高的
 - 对于有unique约束的字段，其本质就是唯一索引
 
-# 3、JDBC
+
+
+# 3、HTML
+
+W3C组织（万维网联盟）制定的网页标准有三个部分（可以在网站w3school上学习）：
+
+- HTML：元素
+- CSS：颜色、大小样式等
+- JavaScript ：交互
+
+![image-20241109124706967](javaweb.assets/image-20241109124706967.png)
+
+## 3.1、快速入门
+
+- 关键字不区分大小写
+- 单引号和双引号不分 
+
+```html
+<html>
+    <head>
+        <title>这是一个html的快速入门案例</title>
+    </head>
+    <body>
+        hello,world
+    </body>
+</html>
+```
+
+![](javaweb.assets/image-20230730210332200.png)
+
+## 3.2、基本标签
+
+```html
+<!-- 定义一级标题 -->
+<h1> xxx </h1>
+<!-- 定义六级标题 -->
+<h6> xxx </h6>
+<!-- 定义字体 -->
+<font face="楷体" size="5" color="#ffc0cb">xxx</font>
+<!-- 定义粗体 -->
+<b>xxxx</b>
+<!-- 定义斜体 -->
+<i>xxxx</i>
+<!-- 定义下划线 -->
+<u>xxxx</u>
+<!-- 将文本居中 -->
+<center>xxx</center>
+<!-- 这将是一个段落 -->
+<p>这是一段话</p>
+<!-- 放在文字后面，表示换行 -->
+<br>
+<!-- 一条水平线 -->  
+<hr>
+
+<!-- 这是没有任何语义的标签 为了和css这些打配合，一行可以写多个，宽高由内容撑开，不可以设置-->
+<span>xxx</span>
+<!-- 这是没有任何语义的标签 为了和css这些打配合，一行只能写一个，宽度默认是父元素宽度，高度由内容撑开，可以手动设置宽高-->
+<div>xxx</div>
+
+```
+
+## 3.3、图片、音频、视频标签
+
+```html
+<img src="" height="300px" width="200px">
+```
+
+- src这里建议使用相对路径，./表示当前目录下，../表示上一级目录
+- 宽度和高度这里写的是像素高度，如果同时指定可能导致图片大小变形，一般指定其中的一个，另一个会自动比例缩放
+- 高端宽度也可以使用10%等表示相对于父元素的大小
+
+```html
+<!--下面是视频标签，controls是加载播放组件必须写-->
+<video src="xxx" controls width="100px"></video>
+<!--下面是音频标签，controls是加载播放组件必须写-->
+<audio src="xxx" controls></audio>
+```
+
+## 3.4、超链接
+
+![image-20241109152637939](javaweb.assets/image-20241109152637939.png)
+
+## 3.5、列表 
+
+![](javaweb.assets/image-20230730222234177.png)
+
+## 3.6、表格
+
+```html
+<!--border是边框，边框1px width是整个表格的宽度 cellspacing="0"是cell和cell直接的间隙=0-->
+<table border="1px" cellspacing="0" width="600px">
+    <!--tr是行-->
+    <tr>
+        <!--th是表头-->
+        <th>序号</th>
+        <th>品牌</th>
+        <th>名称</th>
+        <th>企业名称</th>
+    </tr>
+    <!--align是把cell内容居中展示-->
+    <tr align="center">
+        <!--td是单元格-->
+        <td>1</td>
+        <td><img src=""></td>
+        <td>huawei</td>
+        <td>华为技术有限公司</td>
+    </tr>
+    <tr align="center">
+        <td>2</td>
+        <td><img src=""></td>
+        <td>阿里</td>
+        <td>阿里巴巴有限公司</td>
+    </tr>
+</table>
+```
+
+![image-20241110142932471](javaweb.assets/image-20241110142932471.png)
+
+## 3.7、表单
+
+```html
+<!--action：指定表单数据提交的URL，一般用完整路径（项目名/servlet名）-->
+<!--method：指定表单提交的方式：get和post，如果不写默认get-->
+	<!--get，是默认值，需要提交的数据将拼接在URL后面，且URL的长度有限制4Kb-->
+	<!--post，需要提交的数据将会在http请求协议的请求体中，且请求参数的个数无限-->
+<form action="" method="get">
+    <!--text类型表示是一个输入框，username是传入值的引用-->
+    用户名:<input type="text" name="username">
+    年龄:<input type="text" name="age">
+    <!--submit类型表示是个提交按钮，点击提交后会送到url处，value是按钮上面显示的字-->
+    <input type="submit" value="提交"></input>
+</form>
+```
+
+![image-20241110144122407](javaweb.assets/image-20241110144122407.png)
+
+下面详细讲一下**表单项**3：（但是表单项也不用必须放在form中 单独用也是可以的）
+
+```html
+<!--通过type控制输入形式，下为type的取值，没有</input>,name字段为提交后的引用名称-->
+<input type="" name="">
+
+性别：<input type="radio" name="gender" value="1">男
+     <input type="radio" name="gender" value="2">女
+
+性别：<input type="checkbox" name="gender" value="1">男
+     <input type="checkbox" name="gender" value="2">女
+     <input type="checkbox" name="gender" value="3">未知
+
+图像<input type="file" name="image"></input>
+
+<input type="submit" value="提交"></input>
+<input type="reset" value="重置"></input>
+<input type="button" value="按钮"></input>
+```
+
+- text为默认值，定义单行的输入字段，在这种情况下常常还需要定义name属性，表示该值的引用
+- password定义密码字段，与text的不同在于其显示秘文，需要name
+- radio定义单选按钮，name必须相同，是传值的引用，如果点击男，gender传1，点击女则gender传2
+
+![image-20241110145706496](javaweb.assets/image-20241110145706496.png)
+
+- checkbox定义复选框，name必须相同，是传值的引用
+
+![image-20241110145928495](javaweb.assets/image-20241110145928495.png)
+
+- file定义文件上传按钮，name是引用
+
+![image-20241110150050800](javaweb.assets/image-20241110150050800.png)
+
+- hidden定义隐藏的输入字段
+- submit定义提交按钮，点击将会把表单数据发给url，value可以修改按钮内的文字
+- reset点击将重置表单中的所有数据，value可以修改按钮内的文字
+- button定义可点击的按钮，value可以修改按钮内的文字
+
+```html
+<!--下拉列表-->
+<!--name是引用 如果选择硕士 那么degree=2-->
+<select name="degree">
+    <option  value="-1">请选择</option>
+    <option  value="0">大专</option>
+    <option  value="1">本科</option>
+    <option  value="2">硕士</option>
+</select>
+```
+
+```html
+<!--文本域-->
+<textarea>
+```
+
+## 3.8、页面布局
+
+盒子模型
+
+- content：内容
+- border：边框
+- padding：边框和内容之间的填充
+- margin：边框外面的部分
+
+![image-20241109160633852](javaweb.assets/image-20241109160633852.png)
+
+盒子模型1：
+
+```css
+<style>
+    div {
+        width:200px;
+        height: 200px;
+        box-sizing: border-box;/*border-box模式，则上面的宽和高都是border之内三件套的*/
+        background-color: aqua;/*padding和content是青色*/
+
+        padding: 20px 20px 20px 20px;/*上右下左*/
+        border: 10px solid red;/*只能设置一个宽度10px 实线和红色*/
+        margin: 30px 30px 30px 30px;/*上右下左*/
+    }
+</style>
+```
+
+![image-20241110140538233](javaweb.assets/image-20241110140538233.png)
+
+![image-20241110140616333](javaweb.assets/image-20241110140616333.png)
+
+盒子模型2：（默认模式）
+
+```css
+<style>
+    div {
+        width:200px;
+        height: 200px;
+        box-sizing: content-box;/*content-box模式，则上面的宽和高都是content的*/
+        background-color: aqua;
+
+        padding: 20px 20px 20px 20px;
+        border: 10px solid red;
+        margin: 30px 30px 30px 30px;
+    }
+</style>
+```
+
+比如我想让内容中间排版：
+
+```css
+<style>
+    div {
+        width:60%;
+        margin: 0 20% 0 20%;
+    }
+</style>
+```
+
+
+
+# 4、CSS
+
+全称为：层叠样式表，用来控制html表现的样式，比如控制html字体的颜色大小样式等
+
+![image-20241109150430876](javaweb.assets/image-20241109150430876.png)
+
+style中的属性1：color
+
+![image-20241109151249598](javaweb.assets/image-20241109151249598.png)
+
+```html
+<h1 style="color: rgb(256, 0, 0);"> 你好 </h1>
+```
+
+
+
+但是在使用上面的方式2和3引入的时候，我们会发现，比如同样两个h1标签，可能他们的样式不一样，但是我们设置style的时候只能对一类标签统一设置，不能定制化，于是引出了下面的“选择器”：
+![image-20241109152143400](javaweb.assets/image-20241109152143400.png)
+
+而且他们的优先级：id>类>元素
+
+
+
+style中的属性2：font-size
+
+```html
+<h1 style="color: rgb(256, 0, 0);font-size: 12px;"> 你好 </h1>
+```
+
+
+
+#  5、JavaScript 
+
+作用：控制网页行为，使得网页可以交互，js代码与java无关系，但其代码风格类似（每行代码后的;可以写也可以不写，但建议和java一致了）。注释和java一样。
+
+## 5.1、引入方式
+
+- 内部脚本：在HTML代码中，写< script>< /script>标签，将js代码写在其中，可以在html的任意位置存放任意数目的标签，但一般都放在body的结尾以改善显示速度
+- 外部脚本：写一个js文件，进行引入。不需要写< script>< /script>标签，直接写代码，在html的head底部引入为< script src="地址">< /script>
+
+## 5.2、输出语句
+
+![](javaweb.assets/image-20230731161848438.png)
+
+## 5.3、变量、数据类型、运算符、流程控制
+
+用var定义的变量是全局变量（即使在代码块中声明，也可以全局使用），且建议使用驼峰命名法
+
+let定义的是局部变量，代码块外不可以获得
+
+```js
+//弱类型
+var test=20;
+test="xjtu";
+```
+
+![](javaweb.assets/image-20230731162341077.png)
+
+运算符和java一样，唯一的不同：
+
+- js中的==在比较的时候会自动进行类型转换，比较值一不一样
+- js中的===不进行类型转换
+
+流程控制和java一样。
+
+## 5.5、函数
+
+![](javaweb.assets/image-20230731163018939.png)
+
+## 5.6、对象
+
+### 5.6.1、对象1—Array
+
+定义(建议法2)：
+
+![](javaweb.assets/image-20230731163420886.png)
+
+访问：
+
+![](javaweb.assets/image-20230731163449095.png)
+
+
+
+特点：其是变长和变类型的，即可以字符串与数字共存，虽然定义了三个，但是也可以突然填入10的位置为20。通过arr.length得到数组长度。
+
+### 5.6.2、对象2—String
+
+定义（推荐法2）：
+
+![](javaweb.assets/image-20230731163928531.png)
+
+属性：length 方法：charAt()   indexOf()
+
+### 5.6.3、对象3—自定义对象和JSON
+
+定义：
+
+![](javaweb.assets/image-20230731164102925.png)
+
+调用：对象名称.属性/方法
+
+```js
+<script>
+    var Tom = {
+        name:"a",
+        age:10,
+        eat:function() {
+            alert("a");
+        }
+    }
+</script>
+```
+
+下面说一下JSON
+
+```js
+//下面定义了一个json字符串，key必须"",value看情况
+var jsonstr = '{"name":"tom","age":10}';
+//直接对字符串这样搞肯定不行
+jsonstr.name;
+//所以需要先把json字符串转为json对象，然后才能这样搞
+var obj = JSON.parse(jsonstr);
+obj.name;
+//也可以把json对象改为json字符串
+var str = JSON.stringify(obj);
+```
+
+
+
+### 5.6.4、对象4—BOM对象(全小写)
+
+browser object model，有5个：window navigator screen history location，会2个就行
+
+**window**
+
+主要是下面四个方法
+
+![](javaweb.assets/image-20230731164721263.png)
+
+confirm有返回值，点击确定返回true，点击取消返回false
+
+下面是两个时间函数
+
+![](javaweb.assets/image-20230731165105453.png)
+
+**location**
+
+![](javaweb.assets/image-20230731165424368.png)
+
+```js
+<script>
+    //会打印当前的url地址
+    alert(location.href);
+	//当运行到这里时，自动跳转到百度
+    location.href = "http://www.baidu.com";
+</script>
+```
+
+
+
+### 5.6.5、对象5—DOM对象
+
+js把html的所有部分全部都封装为了对象。包括标签，属性，文字等等等等。我们可以得到这些对象，然后通过修改他们的值，实现对他们的修改。
+
+1、得到需要的元素
+
+```js
+<script>
+    //得到单个元素 通过id
+    var h1 = document.getElementById('h1');
+    //得到元素数组 通过class
+    var clss = document.getElementsByClassName('cls');
+    //得到元素数组 通过标签
+    var divs = document.getElementsByTagName('div');
+    //得到元素数组 通过name属性
+    var hobbys = document.getElementsByName('hobby');
+</script>
+```
+
+2、调用得到的元素的方法，然后查手册，调用相应元素的方法。
+
+- 比如你给img标签安了一个id，然后你可以通过这个id得到img元素（标签），查看手册看看img有哪些方法。
+- 再比如通过name得到了input标签，查看input标签的方法，调用即可
+- ！！！即，得到的元素是“html标签”！！！
+
+
+
+## 5.7、事件监听
+
+推荐使用第二种。函数和dom代码应该在script标签中，下面的演示有点问题
+
+![](javaweb.assets/image-20230731205103208.png)
+
+这里的onclick即为事件，js代码提供了丰富的事件供人们选择。
+
+![image-20241110182403747](javaweb.assets/image-20241110182403747.png)
+
+**而且一个元素可以绑定多个事件。**
+
+```html
+<body>
+    <img src="熄灯图片路径" id="light">
+    <!--给点亮按钮绑定单击事件-->
+    <input type="button" value="点亮" onclick="on()"></input>
+	<!--给熄灭按钮绑定单击事件-->
+    <input type="button" value="熄灭" onclick="off()"></input>
+    <script>
+        //通过id得到img标签
+        var light = document.getElementById('light');
+        function on() {
+            light.src="开灯图片路径";
+        }
+        function off() {
+            light.src="熄灯图片路径";
+        }
+    </script>
+</body>
+```
+
+# 6、Vue
+
+简介：是一个前端框架，js的DOM太麻烦了，这个框架可以简化书写
+
+分为模型层和视图层，这两个层“双向数据绑定”，即修改视图层的数据，模型层同步改变；修改模型层的数据，视图层也改变
+
+## 6.1、快速入门
+
+```html
+<!--head引入-->
+<script src="./js/vue.js"></script>
+
+<body>
+    <div id="app">
+        <!--v-model处绑定message 双向绑定-->
+        <!--这里是视图层-->
+        <input type="text" v-model="message">
+        {{message}}
+    </div>
+</body>
+<script>
+    //新建一个Vue对象 el和data是固定写法
+    //vue接管的区域是整个大app区
+    //这里是模型层
+    new Vue({
+        el:"#app",
+        data:{
+            message:"hello vue"
+        }
+    })
+</script>
+```
+
+效果：输入框中的内容改变的时候，后面的会同步改变
+
+原理：双向数据绑定
+
+![image-20241110230336974](javaweb.assets/image-20241110230336974.png)
+
+## 6.2、常用指令
+
+![](javaweb.assets/image-20230813144945366.png)
+
+1、v-bind和v-model
+
+```html
+<body>
+    <div id="app">
+    	<!--v-bind和超链接绑定-->
+        <a v-bind:href="url">跳转</a>
+        <!--v-model和表单项绑定-->
+        <input type="text" v-model="url">
+    </div>
+</body>
+
+<script>
+    new Vue({
+        el:"#app",//接管app区域
+        data:{
+            url:"http://www.baidu.com"
+        }
+    })
+</script>
+```
+
+因为是双向绑定，所以将输入框修改之后，跳转url也会随之修改
+
+![image-20241111100638432](javaweb.assets/image-20241111100638432.png)
+
+2、v-on:用于绑定事件
+
+```html
+<body>
+    <div id="app">
+        <input type="button" v-on:click="fun1()">
+    </div>
+</body>
+<script>
+    new Vue({
+        el:"#app",
+        data:{  
+        },
+        methods:{
+            fun1:function() {
+                alert("你好");
+            }
+        }
+    })
+</script>
+```
+
+3、v-if家族
+
+```html
+<body>
+    <div id="app">
+        请输入年龄<input type="text" v-model="age">，经判断
+        <span v-if="age < 35"> 年轻人 </span>
+        <span v-else-if="age >= 35 && age < 60"> 中年人 </span>
+        <span v-else="age >= 60"> 老年人 </span>
+    </div>
+</body>
+
+<script>
+    new Vue({
+        el:"#app",
+        data:{
+            age:"22"  
+        },
+        methods:{
+        }
+    })
+</script>
+```
+
+![image-20241111101747708](javaweb.assets/image-20241111101747708.png)
+
+4、v-show：作用同v-if
+
+```html
+<body>
+    <div id="app">
+        请输入年龄<input type="text" v-model="age">，经判断
+        <span v-show="age < 35"> 年轻人 </span>
+        <span v-show="age >= 35 && age < 60"> 中年人 </span>
+        <span v-show="age >= 60"> 老年人 </span>
+    </div>
+</body>
+<script>
+    new Vue({
+        el:"#app",
+        data:{
+            age:"22"  
+        },
+        methods:{    
+        }
+    })
+</script>
+```
+
+5、v-for
+
+```html
+<body>
+    <div id="app">
+        <!--引用的时候用{{}}形式-->
+        <div v-for="(city,index) in citys">{{index}}:{{city}}</div>
+        上面这句话和下面的等价
+        <div>0:bj</div>
+        <div>1:sh</div>
+        <div>2:xa</div>
+        <div>3:linfen</div>
+    </div>
+</body>
+
+<script>
+    new Vue({
+        el:"#app",
+        data:{
+            //数组对象
+            citys:["bj","sh","xa","linfen"]  
+        },
+        methods:{   
+        }
+    })
+</script>
+```
+
+
+
+## 6.3、vue与ajax 的结合
+
+一般，我们在vue的mounted下面写ajax代码。mounted代表页面加载完毕，完毕后即可调用方法向查询数据
+
+![](javaweb.assets/image-20230813151600659.png)
+
+# 7、Maven
+
+单独文件
+
+# 6、JDBC
 
 ## 1、简介
 
@@ -577,15 +1229,7 @@ public class DruidDemo {
 
 
 
-# 4、Maven
-
-是一个项目管理工具
-
-三大功能：
-
-- 标准化的项目结构
-- 标准化的构建流程（一键编译、打包）
-- 好用的依赖管理：不用到处去找jar包
+# 
 
 
 
@@ -615,30 +1259,29 @@ MyBatis是一款持久层框架，是对JDBC的简化。
 
 ```xml
 <dependencies>
-   
-        <!--mybatis依赖-->
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>3.5.6</version>
-        </dependency>
+    <!--mybatis依赖-->
+    <dependency>
+        <groupId>org.mybatis</groupId>
+        <artifactId>mybatis</artifactId>
+        <version>3.5.6</version>
+    </dependency>
+
+    <!--mysql驱动-->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.17</version>
+    </dependency>
+
+    <!--单元测试-->
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+    </dependency>
     
-        <!--mysql驱动-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.17</version>
-        </dependency>
-    
-        <!--单元测试-->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-    
-    </dependencies>
+</dependencies>
 ```
 
 3、编写MyBatis核心配置文件（替换连接信息，解决硬编码问题）
@@ -1078,234 +1721,9 @@ SqlSessionFactory sqlSessionFactory = SqlSessionFactoryUtils.getSqlSessionFactor
 
 
 
-# 6、HTML
+- 
 
-网页的W3C标准：
 
-- 结构：HTML
-- 表现：CSS
-- 行为：JavaScript 
-
-## 1、快速入门
-
-```html
-<html>
-    <head>
-        <title>这是一个html的快速入门案例</title>
-    </head>
-    <body>
-        hello,world
-    </body>
-</html>
-```
-
-![](javaweb.assets/image-20230730210332200.png)
-
-## 2、基本标签
-
-- < h1> xxx < /h1>：定义一级标题
-- < h6> xxx < /h6>：定义六级标题
-- < font face="楷体" size="5" color="#ffc0cb">xxx< /font>：定义字体
-- < b>xxxx< /b>：定义粗体
-- < i>xxxx< /i>：定义斜体
-- < u>xxxx< /u>：定义下划线
-- < center>xxx< /center>：将文本居中
-- < p>xxxx< /p>：这将是一个段落
-- < br>：放在文字后面，表示换行
-- < hr>：一条水平线
-
-## 3、图片、音频、视频标签
-
-![](javaweb.assets/image-20230730221324500.png)
-
-```
-<img src="" height="300" width="200">
-......
-```
-
-src这里建议使用相对路径，./表示当前目录下
-
-## 4、超链接
-
-< a>xxxxxxx< /a>
-
-![](javaweb.assets/image-20230730222054356.png)
-
-## 5、列表 
-
-![](javaweb.assets/image-20230730222234177.png)
-
-
-
-## 6、表格
-
-- < table>< /table>：定义表格
-- < tr>< /tr>：定义行
-- < td>< /td>：定义单元格，td有两个属性，rowspan和colspan，用于合并单元格，其值大小表示在行上和列上各合并了几个单元格
-- < th>< /th>：定义表头单元格
-
-table的border使得每个单元格的四周有一圈宽度为1的线
-
-cellspacing使得单元格之间的空白去掉
-
-tr中的align使得该行中的每个单元格的内容都居中
-
-![](javaweb.assets/image-20230730222639729.png)
-
-![](javaweb.assets/image-20230730222655364.png)
-
-
-
-## 7、表单
-
-< form>xxxxx< /form>
-
-form有两个属性值：
-
-（1）action：指定表单数据提交的URL，一般用完整路径（项目名/servlet名）
-
-（2）method：指定表单提交的方式：
-
-- get，是默认值，需要提交的数据将拼接在URL后面，且URL的长度有限制4Kb
-- post，需要提交的数据将会在http请求协议的请求体中，且请求参数的个数无限
-
-## 8、表单项标签
-
-1、< select>xxx< /select>：定义下拉列表，< option>xxx< /option>定义列表项目，放在xxx中，想要提交数据也要加name字段，如果option加了value字段，则提交value，否则默认提交option包裹的内容
-
-2、< textarea>为文本域
-
-![](javaweb.assets/image-20230730225447183.png)
-
-3、< input>：通过type控制输入形式，下为type的取值，没有< /input>；name字段为提交后的引用名称
-
-- text，为默认值，定义单行的输入字段，在这种情况下常常还需要定义name属性，表示该值
-- password，定义密码字段，与text的不同在于其显示秘文，在这种情况下常常还需要定义name属性，表示该值
-- radio定义单选按钮，一个radio是一个小圆圈，要让两个达到互斥的效果，设置其name相同即可，且radio下切记还要添加value字段，这样提交时其提交的为value字段的内容![](javaweb.assets/image-20230730225648932.png)
-- checkbox定义复选框，每个checkbox都是一个小方块，记得让这几个的那么相同，添加value字段![](javaweb.assets/image-20230730225715031.png)
-- file定义文件上传按钮
-- hidden定义隐藏的输入字段
-- submit定义提交按钮，点击将会把表单数据发给server，搭配value字段可以修改按钮里的文字
-- reset，点击将重置表单中的所有数据
-- button，定义可点击的按钮，value可以修改按钮内的文字
-
-
-
-# 7、CSS
-
-全称为：层叠样式表，用来控制html表现的样式，比如控制html字体的颜色等
-
-```
-内联方式：在标签内部使用style属性，属性值是CSS属性键值对
-```
-
-```
-内部样式：定义<style>标签，在其内定义CSS样式
-```
-
-```
-外部样式：单独写一个css文件，在html中使用link标签进行引入
-```
-
-
-
-
-
-# 8、JavaScript 
-
-作用：控制网页行为，使得网页可以交互，js代码与java无关系，但其代码风格类似（每行代码后的;可以写也可以不写）
-
-## 1、引入方式
-
-- 内部脚本：在HTML代码中，写< script>< /script>标签，将js代码写在其中，可以在html的任意位置存放任意数目的标签，但一般都放在body的结尾
-- 外部脚本：写一个js文件，进行引入
-
-## 2、输出语句
-
-![](javaweb.assets/image-20230731161848438.png)
-
-## 3、变量与数据类型
-
-用var定义的变量是全局变量，且建议使用驼峰命名法
-
-```
-var test=20;
-test="xjtu";
-```
-
-![](javaweb.assets/image-20230731162341077.png)
-
-## 4、流程控制
-
-与java相同
-
-## 5、函数
-
-![](javaweb.assets/image-20230731163018939.png)
-
-## 6、对象1——Array
-
-定义：
-
-![](javaweb.assets/image-20230731163420886.png)
-
-访问：
-
-![](javaweb.assets/image-20230731163449095.png)
-
-
-
-特点：其是变长与变类型的，即可以字符串与数字共存，虽然定义了三个，但是也可以突然填入10的位置为20
-
-## 7、对象2——String
-
-定义：
-
-![](javaweb.assets/image-20230731163928531.png)
-
-## 8、对象3——自定义对象
-
-定义：
-
-![](javaweb.assets/image-20230731164102925.png)
-
-调用：对象名称.属性/方法
-
-## 9、对象4——BOM对象
-
-浏览器对象模型，有好几个：Window Navigator Screen History Location
-
-### 9.1Windows
-
-![](javaweb.assets/image-20230731164721263.png)
-
-confirm有返回值，点击确定返回true，点击取消返回false
-
-![](javaweb.assets/image-20230731165105453.png)
-
-### 9.2History
-
-![](javaweb.assets/image-20230731165405465.png)
-
-### 9.3Location
-
-![](javaweb.assets/image-20230731165424368.png)
-
-## 10、对象5——DOM对象
-
-为图片按钮文本等设置id值
-
-使用document.getElementById等方法可以获取该对象，从而对其进行操作
-
-
-
-## 11、事件监听
-
-推荐使用第二种
-
-![](javaweb.assets/image-20230731205103208.png)
-
-这里的onclick即为事件，js代码提供了丰富的事件供人们选择。
 
 
 
@@ -1862,87 +2280,7 @@ public class AjaxServlet extends HttpServlet {
 
 
 
-# 17、Vue
 
-简介：是一个前端框架，简化了前端代码的书写
-
-## 1、快速入门
-
-在webapp目录下面新建js目录，将文件vue.js（E盘的js文件夹中）导入其中
-
-![](javaweb.assets/image-20230810192927616.png)
-
-html代码：
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <div id="app">
-        <input v-model="username">
-        <!--插值表达式 -->
-        {{username}}
-    </div>
-
-<script src="js/vue.js"></script>
-<script>
-    new Vue({
-        el:"#app",
-        data(){
-            return{
-                username:""
-            }
-        }
-    })
-</script>
-
-</body>
-</html>
-```
-
-## 2、常用指令
-
-![](javaweb.assets/image-20230813144945366.png)
-
-1、v-bind
-
-![](javaweb.assets/image-20230813145439848.png)
-
-2、v-model
-
-常用于输入框的双向绑定
-
-![](javaweb.assets/image-20230813150024678.png)
-
-比如上图中，输入框的内容被url绑定，因而点击可以跳转
-
-3、v-on:用于绑定事件
-
-![](javaweb.assets/image-20230813150549493.png)
-
-4、v-if家族
-
-![](javaweb.assets/image-20230813150720755.png)
-
-上图中，如果count == 3，ze展示div1，如果为2展示div2，否则展示div3
-
-5、v-show：作用同v-if
-
-6、v-for
-
-![](javaweb.assets/image-20230813151051786.png)
-
-上图中，addrs为data中的数组
-
-## 3、vue与ajax 的结合
-
-一般，我们在vue的mounted下面写ajax代码。mounted代表页面加载完毕，完毕后即可调用方法向查询数据
-
-![](javaweb.assets/image-20230813151600659.png)
 
 # 18、Element
 
