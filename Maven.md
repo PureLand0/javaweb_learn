@@ -1,26 +1,24 @@
 # 1、简介
 
-Maven是一个项目管理工具，将项目开发和管理过程抽象为一个项目对象模型（POM），即将一个项目当做一个对象。
-
-![](Maven.assets/image-20230725202028307.png)
+Maven是一个**管理java项目的工具**。当git来学习。
 
 作用：
 
-- 项目构建：提供标准的、跨平台的自动化项目构建方式
+- 项目构建：提供标准的、跨平台的自动化项目构建方式。比如编译和打包，人家提供好了，不用自己javac
 - 依赖管理：方便快捷的管理项目依赖的资源（jar包），避免资源间的版本冲突问题
-- 统一开发结构：提供标准的、统一的项目结构，如下
+- 统一开发结构：提供标准的、统一的项目结构，如下，否则不同的开发工具比如idea和eclipse的项目不通用
 
-![](Maven.assets/image-20230725202439290.png)
+![image-20241111105733163](Maven.assets/image-20241111105733163.png)
 
 
 
 # 2、安装
 
-本机在E盘的maven目录下面
+maven是阿帕奇的开源项目，下载在了E盘的maven目录下
 
 
 
-# 3、Maven基础概念——仓库、坐标
+# 3、基础—仓库、坐标
 
 ## 3.1仓库
 
@@ -30,11 +28,13 @@ Maven是一个项目管理工具，将项目开发和管理过程抽象为一个
 
 解释：maven团队维护了一个中央仓库，里面包含所有的可以公开的jar包。公司有自己的私服，其中包含中央仓库的子集（也包含公司自己创建的jar包，不想让别人使用），本地要想访问，可以先从私服拿，不行再向中央拿。
 
-本地仓库：E盘下，Maven下，有个.m2文件，其为仓库
+本地仓库：E盘下，Maven下，有个.m2文件，其为本地仓库（在settings.xml中修改）
+
+也配置好了aliyun为私服，避免从中央仓库下载拖慢速度（在settings.xml中修改）
 
 ## 3.2坐标
 
-含义：Maven中的坐标用于描述仓库中的jar包的位置，是唯一的
+含义：Maven中的坐标用于描述仓库中的jar包的位置，是唯一的（其实就是身份ID）
 
 组成：![image-20230725204643756](E:\typora\img\image-20230725204643756.png)
 
@@ -46,46 +46,43 @@ Maven是一个项目管理工具，将项目开发和管理过程抽象为一个
 
 
 
-# 4、手工搓Maven
+# 4、手工Maven
 
 略
 
-# 5、IDEA下的Maven
+# 5、IDEA下Maven
 
-1、创建空项目
+## 5.1配置maven环境
 
-![](Maven.assets/image-20230725223501313.png)
+1、创建空项目mavenlearn
 
-2、在settings中查找maven（修改三个路径）
+![image-20241111112750773](Maven.assets/image-20241111112750773.png)
 
-![](Maven.assets/image-20230725223759670.png)
+2、在settings\build\build tools中查找maven（修改三个路径）
 
-3、打开项目结构，新建模块p1，p1即为maven项目
+![image-20241111112739920](Maven.assets/image-20241111112739920.png)
 
-![](Maven.assets/image-20230725225436110.png)
+3、修改maven的java编译器为17
 
-4、在pom.xml中加入依赖
+![image-20241111112630422](Maven.assets/image-20241111112630422.png)
 
-![](Maven.assets/image-20230725225645197.png)
+4、确认本项目的编译器为17
 
-5、main下写程序Demo
+![image-20241111112710767](Maven.assets/image-20241111112710767.png)
 
-![](Maven.assets/image-20230725230217889.png)
+5、以上为单个项目的maven引入流程，我们也可以弄个全局的配置，就不用每次都这么搞了。在下面的窗口选择setting，重复上面的流程搞一遍就是全局的了
 
-6、test下写程序DemoTest
+![image-20241111113258166](Maven.assets/image-20241111113258166.png)
 
-![](Maven.assets/image-20230725232053368.png)
+## 5.2创建maven项目
 
-7、在旁边的maven中的lifecycle中双击哪个工具就运行哪个
+在mavenlearn下创建module，记得修改jdk为17。
 
-![](Maven.assets/image-20230725232104665.png)
+注：之前学的java项目的字节码文件在out里面，但是现在maven项目的字节码文件在**src同级的target下面**，黄色标识。（比如在main的java下面新建包，新建类，然后运行，就会自动生成target目录）
 
-- 点击compile将会编译，产生target目录
-- 点击clean将清除target目录
-- 点击test将会ces
-- 点击package将执行编译和测试
+![image-20241111120052779](Maven.assets/image-20241111120052779.png)
 
-
+或者也可以导入别的模块。
 
 # 6、使用模板（archetype）快速创建java项目和web项目
 
@@ -162,7 +159,7 @@ Maven是一个项目管理工具，将项目开发和管理过程抽象为一个
 
 7、介绍一下pom的结构
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -198,11 +195,11 @@ Maven是一个项目管理工具，将项目开发和管理过程抽象为一个
 
 
 
-# 8、依赖管理
+# 8、依赖（jar包）管理
 
 ## 1、依赖配置
 
-含义：依赖是当前项目运行所需要的jar，一个项目可以设置多个依赖
+含义：**依赖是当前项目运行所需要的jar包**，一个项目可以设置多个依赖
 
 ![](Maven.assets/image-20230726234101448.png)
 
@@ -210,27 +207,62 @@ Maven是一个项目管理工具，将项目开发和管理过程抽象为一个
 
 ## 2、依赖传递
 
-模块A直接依赖于模块/包B，模块/包B直接依赖于模块/包C
+模块A**直接依赖**于模块/包B，模块/包B直接依赖于模块/包C
 
-我们称模块A间接依赖于模块/包C，对于A来说，C是可以正常使用的，这个就叫传递性
+我们称模块A**间接依赖**于模块/包C，对于A来说，C是可以正常使用的，这个就叫传递性
 
+所以依赖分为2种：
 
+- 直接依赖
+- 间接依赖
+
+比如某天我们不想要A去依赖C了，想要掐断C进入A，需要在A的pom文件中对引入B 的代码进行修改，注意切断C的时候可以不输入C的版本号：
+
+```xml
+<dependency>
+    <groupId>B</groupId>
+    <artifactId>B</artifactId>
+    <version>1</version>
+    <exclusions>
+        <exclusion>
+            <groupId>C</groupId>
+            <artifactId>C</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+```
 
 ## 3、依赖的范围
 
-<scope>标签，用来设置该依赖的范围
+< scope>标签，用来设置该依赖的范围
+
+- 主代码：在main中可以使用
+- 测试代码：在test中可使用
+- 打包：打包为jar包之后包不包含这个依赖
 
 ![](Maven.assets/image-20230727163121049.png)
 
-
-
 # 9、生命周期与插件
 
-![](Maven.assets/image-20230727164515605.png)
+![image-20241112170149056](Maven.assets/image-20241112170149056.png)
 
-双击生命周期可以执行对应周期的功能；双击插件可以执行对应插件的功能。
+![image-20241112170310364](Maven.assets/image-20241112170310364.png)
 
-每个生命周期都会对应相应的插件，代表应该执行这些插件。我们可以在生命周期中人为加上其他应该执行的插件。
+我们只关注下面五个阶段：
+
+- clean：清除上一次构建产生的文件，比如target文件夹会被删去
+- compile：对项目代码进行编译，会生成target文件夹
+- test：会运行test下面的所有的单元测试
+- package：打包操作，把项目打包成jar包，然后放入target文件夹
+- install：把打好的jar包放入本地仓库
+
+注意：运行同一周期某个阶段的时候，他的前一阶段也会运行。比如运行install，则前面的compile，test等都会运行，但是clean不会运行，因为他们不是一个周期。
+
+运行：双击Lifecycle中对应的按钮
+
+跳过阶段：比如我现在进行package操作，但是我不想再test了，可以点击test，然后点击“蓝色闪电”按钮，表示跳过test
+
+生命周期和插件（Plugins）的关系：其实生命周期就是靠这些插件来运行的
 
 
 
@@ -278,9 +310,7 @@ Maven是一个项目管理工具，将项目开发和管理过程抽象为一个
 
 
 
-# 15、跳过测试
 
-点击maven的蓝色闪电符号即可跳过测试
 
 
 

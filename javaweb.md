@@ -1015,25 +1015,517 @@ js把html的所有部分全部都封装为了对象。包括标签，属性，�
 
 
 
-## 6.3、vue与ajax 的结合
+# 7、Ajax
 
-一般，我们在vue的mounted下面写ajax代码。mounted代表页面加载完毕，完毕后即可调用方法向查询数据
+写在前端的js里面，用于请求后端url接口数据，然后通过DOM操作或者vue传给html进行展示。现在基本不用了，被下面的axios取代了。
 
-![](javaweb.assets/image-20230813151600659.png)
+![](javaweb.assets/image-20230810170517546.png)
 
-# 7、Maven
+## 7.1、案例（弃用）
 
-单独文件
+```html
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <div id="div1"></div>
+    </head>
+    <body>
+        <script>
+            //1.创建核心对象
+            const xhttp = new XMLHttpRequest();
+            //2.发送请求
+            xhttp.open("GET", "http://localhost:8080/p3/ajaxServlet", true);
+            xhttp.send();
+            //3.获取响应
+            xhttp.onreadystatechange = function() {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    //DOM操作 得到数据后返给html
+                    document.getElementById('div1').innerHTML = xhttp.responseText;
+                }
+            };
+        </script>
+    </body>
+</html>
+```
 
-# 6、JDBC
+## 7.2、Axios（现用）
 
-## 1、简介
+**是对AJAX的一种封装，用于简化书写。**然后axios可以和vue结合了
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <!--引入文件-->
+        <!--首先在js目录中引入axios.js文件（副本在E盘的js文件夹中）-->
+        <script src="js/axios.js"></script>
+    </head>
+    
+    <body>
+        <script>
+            //get发送请求
+            axios({
+                method:"get",
+                url:"http://localhost:8080/p3/ajaxServlet?username=zhangsan"
+            }).then(function (resp){
+                alert(resp.data);
+            })
+
+            //post发送请求
+            axios({
+                method:"post",
+                url:"http://localhost:8080/p3/ajaxServlet",
+                data:"username=zhangsan"
+            }).then(function (resp){
+                alert(resp.data);
+            })
+        </script>
+    </body>
+</html>
+```
+
+下面是进一步简化：（推荐使用）
+
+![image-20241111143014695](javaweb.assets/image-20241111143014695.png)
+
+# 8、前端工程化
+
+原先我们使用html+css+js，然后使用vue把js中的DOM替换掉了，然后使用axios将js中的ajax替代掉了。但这样很不规范，我们需要把前端规范化，这就是Vue-cli脚手架。
+
+## 8.1、Vue-Cli脚手架
+
+功能：统一的目录结构、热部署、本地调试、集成打包上线
+
+Vue-Cli脚手架依赖于NodeJS环境，有点类似于java依赖于jdk，我们需要先把NodeJS安上。
+
+下载好NodeJS之后，需要设置npm的全局安装路径为刚刚的下载地址
+
+![image-20241111151147979](javaweb.assets/image-20241111151147979.png)
+
+且设置npm的淘宝镜像
+
+![image-20241111151926059](javaweb.assets/image-20241111151926059.png)
+
+然后就可以使用npm下载脚手架了（之后下载也是使用npm install）
+
+![image-20241111152125654](javaweb.assets/image-20241111152125654.png)
+
+
+
+接下来就可以使用Vue-cli脚手架创建工程化的前端项目了：
+
+在目录下面进入命令行，输入vue ui进入图形化界面，然后点击创建，配置选择手动，router路由勾选上，版本选择vue2，标准化选择第一个就行
+
+![image-20241111152900139](javaweb.assets/image-20241111152900139.png)
+
+于是在learn下我们就创建了一个使用脚手架搭建的前端工程项目vuelearn
+
+![image-20241111153141627](javaweb.assets/image-20241111153141627.png)
+
+
+
+目录结构如下，非常标准：
+
+![image-20241111152457453](javaweb.assets/image-20241111152457453.png)
+
+启动这个项目：
+
+- 可以点击NPM脚本中的run按钮
+- 也可以进入项目目录，输入**npm run serve**
+
+## 8.2、介绍工程化前端项目
+
+main.js是入口文件
+
+每个.vue文件称为组件文件，每个组件文件分为三部分
+
+
+
+![image-20241111160513421](javaweb.assets/image-20241111160513421.png)
+
+# 9、ElementUI
+
+概述：是**饿了么**公司开发的基于Vue的组件库。**用来使得页面好看**
+
+前面其实已经可以写代码了，本节介绍的东西相当于是对前面的总结。
+
+## 9.1、快速入门
+
+在views下面新建NewComponent.vue，template里面的东西抄的官网
+
+```html
+<template>
+    <el-row>
+        <el-button>默认按钮</el-button>
+        <el-button type="primary">主要按钮</el-button>
+        <el-button type="success">成功按钮</el-button>
+        <el-button type="info">信息按钮</el-button>
+        <el-button type="warning">警告按钮</el-button>
+        <el-button type="danger">危险按钮</el-button>
+      </el-row>
+</template>
+
+<script>
+  export default {
+    name: 'NewComponent'
+  }
+</script>
+
+<style>
+</style>
+```
+
+需要显示的话还需要修改APP.vue
+
+```html
+<template>
+  <div >
+    <!-- 使用新组件 别名new-component -->
+    <new-component></new-component>
+  </div>
+</template>
+
+<script>
+  // 引入NewComponent组件
+  import NewComponent from './views/NewComponent.vue'
+  export default {
+    name: 'App',
+    components: {
+      // components 对象中注册这个组件。注册时，你给组件起了一个别名 new-component
+      'new-component': NewComponent
+    },
+    data() {
+      return {
+        
+      }
+    },
+    methods: {
+      
+    },
+  }
+</script>
+```
+
+## 9.2、还差一些使用组件的东西 前面的消化了再看
+
+# 10、前端打包和部署Nginx
+
+# 11、Maven
+
+单独资料
+
+# 12、Spring全家桶
+
+- Spring全家桶中有很多东西：Spring Framework、Spring Boot、Spring Cloud等等
+- Spring Boot、Spring Cloud这些高级一点的都是基于Spring Framework的
+- 直接使用Spring Framework进行开发非常繁琐，Spring Boot是他的简化版本，易于上手
+- 我们这一章节学习的注解，基本都来自于Spring Framework
+
+## 12.1、HTTP请求响应和解析
+
+HTTP超文本传输协议：
+
+- 基于TCP三次握手，安全
+- 请求-响应模型，一次请求对应一次响应
+- HTTP是无状态的，请求之间是独立的，这意味着他的速度比较快，但是也意味着多次请求之间不能共享数据
+
+请求：
+
+![image-20241112180237101](javaweb.assets/image-20241112180237101.png)
+
+响应：
+
+![image-20241112181423205](javaweb.assets/image-20241112181423205.png)
+
+状态码大纲
+
+![image-20241112181453911](javaweb.assets/image-20241112181453911.png)
+
+状态码描述
+
+![image-20241112181541416](javaweb.assets/image-20241112181541416.png)
+
+解析：
+
+- 原始解析：前端发送http请求，后端使用IO流和Socket拿到这个请求，然后手动进行解析，然后再使用IO流和Socket把响应返回去，很麻烦
+- 现代解析：“web服务器”可以帮我们处理有关http的这一部分内容，让我们专心处理业务逻辑。常用的web服务器是Tomcat。
+- Tomcat使用：只需要把Tomcat安在服务器上，然后把web应用（比如叫demo）（一般都放项目的war包）放到Tomcat的webapps文件下下面即可，双击bin下面的startup.bat即可启动Tomcat服务器，在网页端可以输入地址【ip:端口/demo/url】即可，Tomcat的默认端口是8080
+- 前端部署-nginx
+- 后端部署-Tomcat
+- Spring Boot中已经集成了Tomcat，启动main方法其实也是启动了Tomcat服务器，所以上面说的那种独立的Tomcat就很少使用，一般都是使用集成的
+
+## 12.2、Spring Boot快速
+
+使用Spring Initializr新建project/module（一样的操作），下面以module为例
+
+在mavenlearn项目下面新建module，springboot-quickstart1，参数如下
+
+![image-20241112233421529](javaweb.assets/image-20241112233421529.png)
+
+在下一页把这个依赖要选上“Spring Web”
+
+![image-20241112232046556](javaweb.assets/image-20241112232046556.png)
+
+在这之后，系统会自动连接spring官网进行下载，然后就可以看到项目了
+
+![image-20241112234128572](javaweb.assets/image-20241112234128572.png)
+
+注意：如果pom.xml是黄色的，说明maven没有识别到这是一个maven项目，需要右键pom.xml添加到maven进行管理
+
+我们可以看到里面的**默认依赖**（这俩很重要）（下面详细说）
+
+![image-20241112234317144](javaweb.assets/image-20241112234317144.png)
+
+在com.itheima.controller包下面新建HelloController类，如下
+
+![image-20241112234816007](javaweb.assets/image-20241112234816007.png)
+
+启动springboot，在浏览器输入localhost:8080/hello即可看到hello world
+
+
+
+刚刚说过sp的默认依赖有2个，都有词缀starter，其实这俩叫做“**起步依赖**”，里面集成了json、tomcat等依赖，这也是为什么我们说“Spring Boot中已经集成了Tomcat”。还注意到一个点，这两个起步依赖我们没有写明版本号，其实这个是因为pom.xml中的< parent>标签，这俩版本号已经在父工程中配套好了。
+
+## 12.3、底层和架构
+
+Tomcat又称为“servlet服务器”，是基于servlet进行HTTP解析的，而我们写的controller类，其实Tomcat是不识别的，而之所以能够使用，是因为Spring Boot底层给我们提供了DispatcherServlet，对于收到的请求，封装进HttpServletRequest对象，对于响应数据，封装进HttpServletResponse对象
+
+![image-20241113094333958](javaweb.assets/image-20241113094333958.png)
+
+- 上面这是B/S架构，维护方便，体验一般（javaweb就是BS架构）
+- 还有C/S架构，维护不方便，体验很好
+
+## 12.4、SB接收请求
+
+注：下面的方法都写在Controller中
+
+**简单参数的get和post，假设发送的get为/hello?name=ss&age=20，发送的post为/hello，name和age放请求体里面**
+
+原始接收get请求，该方法已弃用，得自己手动转换
+
+```java
+@RequestMapping("/hello")
+public String hello(HttpServletRequest request) {
+    String name = request.getParameter("name");
+    String ageStr = request.getParameter("age");
+    Integer age = Integer.parseInt(ageStr);
+    return name + age;
+}
+```
+
+新方法接收get请求，该方法可以进行自动类型转换，但是注意，方法的形参和url中的参数名应该一致才可以
+
+```java
+@RequestMapping("/hello")
+public String hello(String name, Integer age) {
+    return name + age;
+}
+```
+
+当然不一致也行，这个时候需要注解@RequestParam，将url中的name传递给username。同时需要注意，这个注解还有个参数required默认是true，这个时候如果url中没有name字段将会报错，可以手动把它改为false，这样万一url中没有name他也可以运行
+
+```java
+@RequestMapping("/hello")
+public String hello(@RequestParam(name="name", required = false) String username, Integer age) {
+    return username + age;
+}
+```
+
+原始方法接收post请求，后端代码不变，把postman的发送方法变下就行
+
+新方法接收post请求，后端代码不变，把postman的发送方法变下就行
+
+
+
+**简单实体的get和post，假设发送的数据较多，我们将之封装为User对象，get为/hello?name=ss&age=20，发送的post为/hello，name和age放请求体里面。**在后端我们需要先建立一个User对象（在pojo包下面），该加的方法都加上。
+
+下面的方法可以接收get＋post请求，方法得到url后，会先把参数封装进User对象，然后再传过来。注意User的成员变量和url中的参数名应该一致才可以
+
+```java
+@RequestMapping("/hello")
+public String hello(User user) {
+    return user.toString();
+}
+```
+
+**复杂实体的get和post，假设User类中有个成员变量是Address类的address，Address类有2个成员变量，province和city。get为/hello?name=ss&age=20&address.province=shanxi&address.city=lf，发送的post为/hello，参数放请求体里面。**
+
+下面的方法可以接收get＋post请求，方法得到url后，会先把参数封装进User对象和Address对象，然后再传过来。注意url中的参数名应该和成员变量一致才可以
+
+```java
+@RequestMapping("/hello")
+public String hello(User user) {
+    return user.toString();
+}
+```
+
+**数组的get和post，比如多选框，hobby一栏选了A和B和C。get为/hello?hobby=A&hobby=B&hobby=C，发送的post为/hello，参数放请求体里面**
+
+下面的方法可以接收get＋post请求，会把url的参数弄进数组中，注意url中的参数名应该和形参一致才可以
+
+```java
+@RequestMapping("/hello")
+public String hello(String[] hobby) {
+    return Arrays.toString(hobby);
+}
+```
+
+**日期时间的get和post，get为/hello?time=2024-11-13 10:10:10，发送的post为/hello，参数放请求体里面**
+
+下面的方法可以接收get＋post请求，注意形参和url参数名字一致。同时注意@DateTimeFormat注解，里面表明url中时间的格式，因为传入的格式千奇百怪，我们需要标一下
+
+```java
+@RequestMapping("/hello")
+public String hello(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime time) {
+    return time.toString();
+}
+```
+
+**JSON数据只能发post，比如还是之前的复杂对象的例子，对于json后端一般使用对象进行接收，注意前面的@RequestBody注解，而且json中的参数名应该和对象的成员变量的名称一致**
+
+![image-20241113110602856](javaweb.assets/image-20241113110602856.png)
+
+```java
+@RequestMapping("/hello")
+public String hello(@RequestBody User user) {
+    return user.toString();
+}
+```
+
+**路径参数的get，比如发送的get为/hello/sss/1这种类型的**
+
+路径参数名应该和形参名一致，同时形参前面加上@PathVariable注解，才可以绑定上
+
+```java
+@RequestMapping("/hello/{name}/{id}")
+public String hello(@PathVariable String name, @PathVariable Integer id) {
+    return name + id;
+}
+```
+
+## 12.5、SB发送响应
+
+@ResponseBody注解：
+
+- 可以写在@Controller类上或者方法上
+- 作用：将方法的返回值作为响应体返回，如果是基本类型就返回基本类型，如果是引用类型则转为json后返回
+- 我们现在的类上使用@RestController，其实 = @Controller + @ResponseBody
+
+但这种情况下，后端返回的数据千奇百怪，所以一般我们都会进行一个约定，把后端响应数据统一封装进一个Result对象，这个Result对象转化为JSON后放到响应体中
+
+```java
+class Result{
+    private Integer code;//状态码
+    private String msg;//状态码描述
+    private Object data;//原先千奇百怪的返回数据
+    //下面是各种方法
+    //还可以写一些静态方法
+    public static Result success(Object data) {
+       return new Result(1, "success", data);
+    }
+}
+```
+
+我们就可以把12.4的第一个方法改装为
+
+```java
+@RequestMapping("/hello")
+public Result hello(String name, Integer age) {
+    //return new Result(1,"success",name+age);
+    return Result.success(name+age);
+}
+```
+
+## 12.6、CSD三层架构
+
+![image-20241113115104465](javaweb.assets/image-20241113115104465.png)
+
+举个例子：
+
+在com.itheima下面创建三个包，controller、service和dao，service和dao中正常放接口，实现类需要在各自创建一个impl包
+
+![image-20241113120410875](javaweb.assets/image-20241113120410875.png)
+
+![image-20241113115724751](javaweb.assets/image-20241113115724751.png)
+
+## 12.7、IOC和DI
+
+- 内聚：软件中功能模块内部的功能联系
+- 耦合：不同模块之间的依赖/关联程度
+- 原则：高内聚低耦合
+
+我们注意到12.6中的架构还是存在耦合的，比如controller中需要使用service，就EmpService empservice = new EmpServiceImpl，如果service层更换了，那还得修改代码，改成EmpServiceImplA，EmpServiceImplB....这就是耦合的坏处。
+
+解决：把EmpServiceImpl放到**容器**里面，用的时候controller从里面拿
+
+Spring为我们提供了“控制反转”和“依赖注入”，**控制反转是Spring的第一大核心**
+
+![image-20241113132548026](javaweb.assets/image-20241113132548026.png)
+
+- 控制反转IOC：对象创建的控制权由程序自身转移到外部（容器），而不是程序直接写死
+- 依赖注入DI：容器提供程序运行时所依赖的资源
+- Bean对象：IOC容器中创建管理的对象，称为bean
+
+实现：
+
+- 第1步先把EmpController中的EmpService empService=new EmpServiceImpl（）改为EmpService empService，同理这样操作EmpServiceImpl中的dao层
+- 第2步在EmpServiceImpl类和EmpDaoImpl类上面加上注解@Component，这表示把这俩类当成bean进行管理（bean声明），相当于是Spring会自动创建这俩的对象然后放到IOC容器中，对象的名称一般都是类名的首字母小写（比如empServiceImpl），这个默认名称可以修改，但是一般不会修改
+- 第3步，EmpController中光秃秃的EmpService empService肯定不能直接用，所以在他上面加上注解@Autowired，表示这个成员对象有IOC容器自动进行DI
+- 如果说我现在不想使用EmpServiceImpl了，想使用EmpServiceImplA，此时不需要更改controller，只需要把EmpServiceImpl头上的@Component去掉，在EmpServiceImplA头上加上@Component即可
+
+
+
+在实际的项目中，@Component注解可以进一步细化：下面三个都是他的衍生注解，都包含了@Component
+
+![image-20241113141004618](javaweb.assets/image-20241113141004618.png)
+
+此时我们会发现，@Controller已经被集成在@RestController中了，@Component注解用在不属于三类，但是还想被IOC容器管理起来的类上，一般是工具类。
+
+注意：上面的@Component四大注解，如果想要被IOC容器识别，还需要注解@ComponentScan，这个注解规定了IOC容器扫描Bean的范围，正常按照上面的CSD三层架构的话，这个不用管，因为启动类的@SpringBootApplication注解已经集成了@ComponentScan注解，表示扫描当前类所在的包及其子包，也就是com.itheima包
+
+![image-20241113141638435](javaweb.assets/image-20241113141638435.png)
+
+但是如果玩抽象把dao放在了和com.itheima同级，那么需要配置@ComponentScan在启动类中
+
+```java
+@ComponentScan({"dao","com.itheima"})//一旦这样配置，那么原先的默认扫描范围会被覆盖掉，所以还需要再显式声明一遍
+@SpringBootApplication
+```
+
+
+
+下面在说一下DI的一些细节，@Autowired是根据类型进行注入的，比如在EmpController中的EmpService empService头上注解，那么Spring会查找EmpService类型的bean，那自然就在IOC容器中找到了EmpServiceImpl类型的对象empServiceImpl（前面说过bean对象的名称是咋回事）。
+
+但这样存在问题比如现在有2个EmpService接口实现类EmpServiceImpl和EmpServiceImplA，那么这个时候会报错，因为Spring也不知道该注入哪个了，这个时候当然可以学前面的方法，把一个类上面的@Component注解毙掉，但是更好的方法其实如下：
+
+- @Primary：加在@Component上头，表示谁是主要的
+- @Qualifier("需要引入的bean的名字")：配合@Autowired使用
+- @Resource(name = "需要引入的bean的名字")
+
+![image-20241113144834507](javaweb.assets/image-20241113144834507.png)
+
+
+
+面试题：
+
+![image-20241113145029620](javaweb.assets/image-20241113145029620.png)
+
+
+
+
+
+# 13、JDBC
+
+## 13.1、简介
 
 是用java语言操作关系型数据库的一套API。因为操作不同的关系型数据库需要不同的代码，太麻烦，因而sun公司推出了jdbc，可以用同一套代码处理所有的关系型数据库。
 
 ![image-20230727202437984](javaweb.assets/image-20230727202437984.png)
 
-## 2、快速入门
+## 13.2、快速入门
 
 1、新建一个工程
 
@@ -1086,7 +1578,7 @@ public class JDBCdemo {
 
 
 
-## 3、JDBC五大 API 详解
+## 13.3、JDBC五大 API 详解
 
 1、DriverManager，驱动管理类，有两个作用：注册驱动与获取数据库连接
 
@@ -1164,7 +1656,7 @@ select * from user where username = 'asdadfa' and password = '' or '1'='1';
 
 
 
-## 4、数据库连接池
+## 13.4、数据库连接池
 
 是一个容器，里面放着数据库连接。（传统做法是来一个用户就开一个连接，用完再销毁，这样太耗费资源了）。因而现在提前make许多连接，需要的时候直接在里面取，不用了放回去。
 
@@ -1229,15 +1721,13 @@ public class DruidDemo {
 
 
 
-# 
 
 
 
 
+# 14、MyBatis
 
-# 5、MyBatis
-
-## 1、简介
+## 14.1、简介
 
 javaEE是企业级java，有三层框架
 
@@ -1247,7 +1737,7 @@ javaEE是企业级java，有三层框架
 
 MyBatis是一款持久层框架，是对JDBC的简化。
 
-## 2、快速入门（基本开发）
+## 14.2、快速入门（基本开发）
 
 1、创建user表，添加数据，为了查询user的all信息，且写类User
 
@@ -1388,7 +1878,7 @@ IDEA是个很强大的工具，可以帮你检查sql语法，但前提是需要�
 
 这时的IDEA也相当于一个navicat。
 
-## 3、Mapper代理开发（企业多使用）
+## 14.3、Mapper代理开发（企业多使用）
 
 传统开发
 
@@ -1470,11 +1960,11 @@ public class MyBatisDemo2 {
 }
 ```
 
-## 4、介绍MyBatis核心配置文件
+## 14.4、介绍MyBatis核心配置文件
 
 - environment标签：可以配置数据库的信息，在environments中可以配置多个数据库，通过environments的default属性来切换
 
-## 5、实际业务流程
+5、实际业务流程
 
 - 写mapper接口
 - 使用mybatisx生成配置文件信息
@@ -1484,7 +1974,7 @@ public class MyBatisDemo2 {
 
 **注意**：如果java中封装的实体的属性和数据库中实体的属性的名称不一样，则查询出来的对象是有问题的，因而我们在查询时需要给其起别名，用as，使得数据库属性名称和实体达到一致。
 
-## 6、案例——多条件查询
+6、案例——多条件查询
 
 对于多条件查询，其接口中方法的书写可以有多种形式，下面三种形式的sql文件是一致的
 
@@ -1506,7 +1996,7 @@ List<User> selectByCondition(User user);
 List<User> selectByCondition(Map map);
 ```
 
-## 7、案例——动态条件查询
+7、案例——动态条件查询
 
 比如有三个筛选条件，但用户只输入了其中的一个
 
@@ -1532,7 +2022,7 @@ where
 	</if>;
 ```
 
-## 8、案例——添加
+8、案例——添加
 
 在接口中写入
 
@@ -1555,7 +2045,7 @@ SQL写入：注意#中的名称应该和对象中的一致
 sqlSession.commit();
 ```
 
-## 9、案例——添加后需要返回新加入的记录的主键值
+9、案例——添加后需要返回新加入的记录的主键值
 
 只需要sql改为
 
@@ -1568,7 +2058,7 @@ sqlSession.commit();
 
 在java中调用对象的getId（）方法即可获得id
 
-## 10、案例——修改全部字段
+10、案例——修改全部字段
 
 在接口中写入：返回值是更新的行数
 
@@ -1594,7 +2084,7 @@ SQL写入：注意#中的名称应该和对象中的一致
 sqlSession.commit();
 ```
 
-## 11、案例——修改部分字段
+11、案例——修改部分字段
 
 SQL写入：注意#中的名称应该和对象中的一致
 
@@ -1614,7 +2104,7 @@ SQL写入：注意#中的名称应该和对象中的一致
 </update>
 ```
 
-## 12、案例——删除一个
+12、案例——删除一个
 
 在接口中写入
 
@@ -1637,7 +2127,7 @@ SQL写入：注意#中的名称应该和对象中的一致
 sqlSession.commit();
 ```
 
-## 13、案例——批量删除
+13、案例——批量删除
 
 在接口中写入
 
@@ -1666,7 +2156,7 @@ sqlSession.commit();
 
 
 
-## 14、重大优化
+14、重大优化
 
 后面做项目的时候可能需要在多个类中进行sql操作，因而下面的代码会在多个类中重复出现
 
@@ -1721,38 +2211,15 @@ SqlSessionFactory sqlSessionFactory = SqlSessionFactoryUtils.getSqlSessionFactor
 
 
 
-- 
 
 
 
 
 
-
-
-# 9、web核心
-
-JavaWeb技术栈：常用b/s模式。
-
-服务器端的资源：
-
-- 静态资源：html，css，javascript
-- 动态资源：Servlet，JSP
-- 数据库
-
-http请求报文分为get请求和post请求
-
-- get：有请求行和请求头。请求信息放在请求头里面
-- post：有请求行、请求头、请求体。请求信息放在请求体里面
-
-http响应报文
 
 
 
 # 10、Web服务器
-
-Tomcat是一个应用软件，对HTTP的协议进行封装，使得程序员不必直接对协议进行操作，使得web开发更为便捷。**本质上是一个启动web服务的工具**。
-
-双击tomcat中bin目录下的startup.bat，可以启动tomcat。
 
 项目部署：将项目整体（一般都放项目的war包）放到webapps下面即部署上了。
 
@@ -1775,8 +2242,6 @@ Tomcat是一个应用软件，对HTTP的协议进行封装，使得程序员不�
 
 
 ## 2、IDEA集成Tomcat
-
-本来需要把war包放在tomcat的目录下面，现在可以使用IDEA进行集成，不用放了就
 
 ```xml
  <!--新加的-->
@@ -2132,238 +2597,15 @@ Response设置响应数据的**方法**：
 
 
 
-# 15、AJAX
 
-之前使用**jsp＋Servlet**，不好用，因而有了AJAX，**HTML+AJAX**为当前的主流技术栈
 
-![](javaweb.assets/image-20230810170517546.png)
 
-**原先**：
 
-![](javaweb.assets/image-20230810170853920.png)
 
-**现在**：
 
-![](javaweb.assets/image-20230810170921045.png)
 
 
 
-## 1、快速入门
-
-1、编写AjaxServlet，且使用response输出字符串
-
-```java
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-@WebServlet("/ajaxServlet")
-public class AjaxServlet extends HttpServlet {
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //1.响应数据
-        resp.getWriter().write("hello ajax");
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        this.doPost(req, resp);
-    }
-}
-
-```
-
-2、新建html，创建XMLHttpRequest对象：用于和服务器交换数据
-
-3、向服务器发送请求
-
-4、获取服务器响应数据
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-<script>
-    //抄下面这个网站即可
-    //https://www.w3school.com.cn/
-    //1.创建核心对象
-    const xhttp = new XMLHttpRequest();
-    //2.发送请求
-    xhttp.open("GET", "http://localhost:8080/p3/ajaxServlet", true);
-    xhttp.send();
-    //3.获取响应
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            alert(this.responseText);
-        }
-    };
-
-</script>
-
-</body>
-</html>
-```
-
-
-
-## 2、Axios
-
-首先在js目录中引入axios.js文件（副本在E盘的js文件夹中）   
-
-是对AJAX的一种封装，用于简化书写
-
-![](javaweb.assets/image-20230812152818675.png)
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<!--引入文件-->
-<script src="js/axios.js"></script>
-
-<script>
-    <!--get-->
-    axios({
-        method:"get",
-        url:"http://localhost:8080/p3/ajaxServlet?username=zhangsan"
-    }).then(function (resp){
-        alert(resp.data);
-    })
-	<!--post-->
-    axios({
-        method:"post",
-        url:"http://localhost:8080/p3/ajaxServlet",
-        data:"username=zhangsan"
-    }).then(function (resp){
-        alert(resp.data);
-    })
-
-</script>
-
-</body>
-</html>
-```
-
-
-
-
-
-# 16、Json数据格式
-
- 因其层次鲜明，常用于前后端之间的数据的传输
-
-1、基础语法
-
-![](javaweb.assets/image-20230810180020498.png)
-
-2、与对象的转换
-
-![](javaweb.assets/image-20230810180201460.png)
-
-3、操作
-
-![](javaweb.assets/image-20230810180248843.png)
-
-
-
-
-
-
-
-# 18、Element
-
-概述：是饿了么公司开发的基于Vue的组件库。**用来使得页面好看**
-
-## 1、快速入门
-
-1.首先在js文件夹中的lin-master文件夹复制到webapp下面
-
-2.引入资源
-
-3.写vue
-
-4.超element网站的代码，不用哪个删哪个
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<div id="app">
-    <!--这里直接复制element的核心代码-->
-    <el-row>
-        <el-button>默认按钮</el-button>
-        <el-button type="primary">主要按钮</el-button>
-        <el-button type="success">成功按钮</el-button>
-        <el-button type="info">信息按钮</el-button>
-        <el-button type="warning">警告按钮</el-button>
-        <el-button type="danger">危险按钮</el-button>
-    </el-row>
-
-    <el-row>
-        <el-button plain>朴素按钮</el-button>
-        <el-button type="primary" plain>主要按钮</el-button>
-        <el-button type="success" plain>成功按钮</el-button>
-        <el-button type="info" plain>信息按钮</el-button>
-        <el-button type="warning" plain>警告按钮</el-button>
-        <el-button type="danger" plain>危险按钮</el-button>
-    </el-row>
-
-    <el-row>
-        <el-button round>圆角按钮</el-button>
-        <el-button type="primary" round>主要按钮</el-button>
-        <el-button type="success" round>成功按钮</el-button>
-        <el-button type="info" round>信息按钮</el-button>
-        <el-button type="warning" round>警告按钮</el-button>
-        <el-button type="danger" round>危险按钮</el-button>
-    </el-row>
-
-    <el-row>
-        <el-button icon="el-icon-search" circle></el-button>
-        <el-button type="primary" icon="el-icon-edit" circle></el-button>
-        <el-button type="success" icon="el-icon-check" circle></el-button>
-        <el-button type="info" icon="el-icon-message" circle></el-button>
-        <el-button type="warning" icon="el-icon-star-off" circle></el-button>
-        <el-button type="danger" icon="el-icon-delete" circle></el-button>
-    </el-row>
-
-</div>
-<!--引入资源-->
-<script src="js/vue.js"></script>
-<script src="lib-master/index.js" charset="utf-8"></script>
-<link rel="stylesheet" href="lib-master/theme-chalk/index.css"/>
-<!--写vue-->
-<script>
-    new Vue({
-        el:"#app"
-    })
-</script>
-
-
-</body>
-</html>
-```
-
-## 2、Element布局
-
-![](javaweb.assets/image-20230812164603821.png)
-
-抄的时候，style应该放head里面；其他还是放div里面；还有一些放new Vue里面
 
 
 
